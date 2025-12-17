@@ -12,14 +12,13 @@ public class CalculatorApp {
         Tokenizer tokenizer = new Tokenizer();
         ShuntingYard postfixMaker = new ShuntingYard();
         PostfixEvaluator postfixEvaluator = new PostfixEvaluator();
-        String prompt = "Please enter the expression (or 'exit' to quit): ";
         String expression;
         double result;
 
         System.out.println("Hello and welcome to Ye Olde Calculator!");
 
         while(true){
-            input.setExpression(prompt);
+            input.setExpression();
             expression = input.getExpression();
             if(expression.equalsIgnoreCase("exit")) break;
 

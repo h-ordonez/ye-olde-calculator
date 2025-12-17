@@ -22,8 +22,8 @@ public class UserInput {
      *
      * @param prompt Asks the user to enter an expression or exit command
      */
-    public void setExpression(String prompt){
-        System.out.print(prompt);
+    public void setExpression(){
+        System.out.print("Enter the expression (or 'exit' to quit): ");
         expression = scanner.nextLine();
     }
 
