@@ -18,9 +18,7 @@ public class UserInput {
     }
 
     /**
-     * Setter method that receives expression from the user.
-     *
-     * @param prompt Asks the user to enter an expression or exit command
+     * Prompts the user for a mathematical expression and sets the expression.
      */
     public void setExpression(){
         System.out.print("Enter the expression (or 'exit' to quit): ");

@@ -15,7 +15,7 @@ public class CalculatorApp {
         String expression;
         double result;
 
-        System.out.println("Hello and welcome to Ye Olde Calculator!");
+        System.out.println("Hello and welcome to Ye Olde Calculator!\n");
 
         while(true){
             input.setExpression();
@@ -25,7 +25,7 @@ public class CalculatorApp {
             try {
                 tokenizer.tokenize(expression);
                 postfixMaker.makePostfix(tokenizer.getTokens());
-                System.out.println("Postfix: " + String.join(" ", postfixMaker.getPostfixQ()));
+                System.out.println("Postfix expression: " + String.join(" ", postfixMaker.getPostfixQ()));
                 result = postfixEvaluator.evalPostfix(postfixMaker.getPostfixQ());
                 System.out.println("Answer: " + result);
             } catch (Exception e) {

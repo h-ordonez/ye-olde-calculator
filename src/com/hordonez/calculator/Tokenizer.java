@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
  * Tokenizes mathematical expressions.
  *
  * @author Henry Ordonez
- * @version 1.0
+ * @version 1.1
  * */
 public class Tokenizer {
     private ArrayList<String> tokens;
@@ -35,19 +35,39 @@ public class Tokenizer {
      */
     public void tokenize(String expression) {
         tokens.clear(); // Ensure ArrayList is empty
-        Pattern pattern = Pattern.compile("\\d+|[+\\-*/()^]");
-        Matcher matcher;
 
-        if(expression != null && !expression.isEmpty()){
-            matcher = pattern.matcher(expression);
-
-            while (matcher.find()) {
-                tokens.add(matcher.group());
-            }
-        }
-        else{
+        if(expression == null || expression.isEmpty()){
             throw new IllegalArgumentException("No expression to tokenize.");
         }
+
+        expression = handleImplicitMultiplication(expression);
+
+        Pattern pattern = Pattern.compile("\\d+|[+\\-*/()^]");
+        Matcher matcher = pattern.matcher(expression);
+
+        while (matcher.find()) {
+            tokens.add(matcher.group());
+        }
+    }
+
+    /**
+     * Pre-processes the expression by converting implicit multiplication into
+     * explicit multiplication.
+     *
+     * @param expression a String representing a mathematical expression
+     * @return a String representing a mathematical expression
+     */
+    private String handleImplicitMultiplication(String expression){
+        // Case: number followed by left paren
+        expression = expression.replaceAll("(\\d+)\\(", "$1*(");
+
+        // Case: right paren followed by number
+        expression = expression.replaceAll("\\)(\\d+)", ")*$1");
+
+        // Case: right paren followed by left paren
+        expression = expression.replaceAll("\\)\\(", ")*(");
+
+        return expression;
     }
 
     /**

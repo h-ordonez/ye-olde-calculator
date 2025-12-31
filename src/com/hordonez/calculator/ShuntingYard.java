@@ -1,15 +1,12 @@
 package com.hordonez.calculator;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Converts a mathematical expression to postfix form.
  *
  * @author Henry Ordonez
- * @version 1.0
+ * @version 2.0
  * */
 public class ShuntingYard {
     private Queue<String> postfixQ;
@@ -19,9 +16,9 @@ public class ShuntingYard {
     }
 
     /**
-     * Getter method
+     * Returns the postfix expression as a Queue.
      *
-     * @return postfixQ
+     * @return postfixQ A Queue made up of operators and operands
      */
     public Queue<String> getPostfixQ(){
         return this.postfixQ;
@@ -36,70 +33,55 @@ public class ShuntingYard {
      */
     public void makePostfix(ArrayList<String> tokens){
         postfixQ.clear();   // Ensure queue is empty before starting
-        Stack<String> stack = new Stack<String>();  // Holds operator and parenthesis tokens
-        boolean isLeftParenPresent = false;
-        boolean parensAreBalanced = true;   // Default assumption
+        Deque<String> stack = new ArrayDeque<>();  // Holds operator and parenthesis tokens
 
-        for(String token : tokens){
-            String tempToken = "";
+        if(!parensAreBalanced(tokens)){
+            throw new IllegalArgumentException("Unbalanced parenthesis.");
+        }
+
+        for(int i = 0; i < tokens.size(); i++){
+            String token = tokens.get(i);
 
             if(isNumeric(token)){
                 postfixQ.add(token);
             }
             else if(token.equals("(")){
-                isLeftParenPresent = true;
-                parensAreBalanced = false;
-                stack.push(token);
+                stack.addFirst(token);
             }
             else if(token.equals(")")){
-                if(!isLeftParenPresent){
-                    parensAreBalanced = false;  // Should never encounter a right paren before a left paren
-                    throw new IllegalArgumentException("Unbalanced expression: Missing left parenthesis.");
-                }
-                else {
-                    tempToken = stack.pop();
-                    while(!tempToken.equals("(")){
-                        postfixQ.add(tempToken);
-                        tempToken = stack.pop();    // Will ultimately pop left paren
-                    }
-
-                    isLeftParenPresent = false; // Reset flag because left paren was popped.
-                    parensAreBalanced = true;   // Matching paren found so assume parens are balanced.
+                String tempToken = stack.pollFirst();
+                while(!"(".equals(tempToken)){
+                    postfixQ.add(tempToken);
+                    tempToken = stack.pollFirst();
                 }
             }
             else if(token.matches("[+\\-*/^]")){
                 Operator currentOp = Operator.lookupBySymbol(token);
 
-                if (currentOp == null) {
-                    throw new IllegalArgumentException("Unknown operator: " + token);
-                }
-
                 while (!stack.isEmpty()) {
-                    Operator topOp = Operator.lookupBySymbol(stack.peek());
-                    if(topOp == null)
+                    Operator topOp = Operator.lookupBySymbol(stack.peekFirst());
+
+                    if(topOp == null) {
                         break; // topOp is not an Operator enum
+                    }
 
                     if (shouldPopOperator(currentOp, topOp)) {
-                        postfixQ.add(stack.pop());
+                        postfixQ.add(stack.pollFirst());
                     }
                     else {
                         break;  // Stop comparing operators. The current token has higher precedence.
                     }
                 }
 
-                stack.push(token);
+                stack.addFirst(token);
             }
             else
                 throw new IllegalArgumentException("Unknown token: " + token);
         }
 
-        if(!parensAreBalanced){
-            throw new IllegalArgumentException("Unbalanced parenthesis: Missing right parenthesis.");
-        }
-
         // Empty the stack
         while(!stack.isEmpty()){
-            String remainingOp = stack.pop();
+            String remainingOp = stack.pollFirst();
             postfixQ.add(remainingOp);
         }
     }
@@ -133,5 +115,31 @@ public class ShuntingYard {
         } catch (NumberFormatException e) {
             return false;
         }
+    }
+
+    /**
+     * Checks if left parenthesis that are present have a corresponding right parenthesis.
+     *
+     * @param tokens String objects of the mathematical expression
+     * @return true if parenthesis are balanced and false otherwise
+     */
+    private boolean parensAreBalanced(ArrayList<String> tokens){
+        Deque<String> stack = new ArrayDeque<>();
+        String stackTop;
+
+        for(String token : tokens){
+            if("(".equals(token)){
+                stack.addFirst(token);
+            }
+            else if(")".equals(token)){
+                stackTop = stack.pollFirst();
+
+                if(!"(".equals(stackTop)){
+                    return false;
+                }
+            }
+        }
+
+        return stack.isEmpty();
     }
 }

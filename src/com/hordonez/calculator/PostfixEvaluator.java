@@ -12,7 +12,7 @@ import java.util.Stack;
 public class PostfixEvaluator {
 
     /**
-     * Evaluates postfix expressions
+     * Evaluates postfix expressions.
      *
      * @param postfixQ Queue in postfix form
      * @return Result of evaluating the postfix expression
