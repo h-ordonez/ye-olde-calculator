@@ -10,21 +10,33 @@ import java.util.Scanner;
  */
 public class UserInput {
     private final Scanner scanner;
+    private String expression;
 
     public UserInput(){
         scanner = new Scanner(System.in);
+        expression = "";
     }
 
-    public double getNumber(String prompt){
-        System.out.print(prompt);
-        return scanner.nextDouble();
+    /**
+     * Prompts the user for a mathematical expression and sets the expression.
+     */
+    public void setExpression(){
+        System.out.print("Enter the expression (or 'exit' to quit): ");
+        expression = scanner.nextLine();
     }
 
-    public char getOperator(){
-        System.out.print("Please enter the operator (+, -, *, /): ");
-        return scanner.next().charAt(0);
+    /**
+     * Getter method that returns the expression.
+     *
+     * @return A mathematical expression or exit command in the form of a string
+     */
+    public String getExpression(){
+        return this.expression;
     }
 
+    /**
+     * Helper method that closes the scanner object.
+     */
     public void closeScanner(){
         scanner.close();
     }

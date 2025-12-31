@@ -1,45 +1,39 @@
 package com.hordonez.calculator;
 
 /**
-* This class is the main driver program.
+* The main driver of the program.
 *
 * @author Henry Ordonez
-* @version 1.0
+* @version 2.0
 * */
 public class CalculatorApp {
     public static void main(String[] args) {
         UserInput input = new UserInput();
-        Calculator calc = new Calculator();
-        double num1;
-        double num2;
+        Tokenizer tokenizer = new Tokenizer();
+        ShuntingYard postfixMaker = new ShuntingYard();
+        PostfixEvaluator postfixEvaluator = new PostfixEvaluator();
+        String expression;
         double result;
-        char operator;
 
-        System.out.println("Hello and welcome to Ye Olde Calculator!");
+        System.out.println("Hello and welcome to Ye Olde Calculator!\n");
 
-        num1 = input.getNumber("Please enter the first number: ");
-        operator = input.getOperator();
-        num2 = input.getNumber("Please enter the second number: ");
+        while(true){
+            input.setExpression();
+            expression = input.getExpression();
+            if(expression.equalsIgnoreCase("exit")) break;
 
-        if(operator == '+'){
-            result = calc.add(num1, num2);
-        }
-        else if(operator == '-'){
-            result = calc.subtract(num1, num2);
-        }
-        else if(operator == '*'){
-            result = calc.multiply(num1, num2);
-        }
-        else if(operator == '/'){
-            result = calc.divide(num1, num2);
-        }
-        else {
-            result = 0.0;
-            System.out.println("You must enter a valid operator.");
+            try {
+                tokenizer.tokenize(expression);
+                postfixMaker.makePostfix(tokenizer.getTokens());
+                System.out.println("Postfix expression: " + String.join(" ", postfixMaker.getPostfixQ()));
+                result = postfixEvaluator.evalPostfix(postfixMaker.getPostfixQ());
+                System.out.println("Answer: " + result);
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+
         }
 
-        System.out.println("Result: " + result);
         input.closeScanner();
-
     }
 }
